@@ -31,18 +31,19 @@ class GraphQL extends ShopifyResource
      * @param string $url
      * @param bool $wrapData
      * @param array|null $variables
+     * @param bool $allowThrottledResponse  Response with {"errors":{"message":"Throttled"}} will be returned as is
      *
      * @uses HttpRequestGraphQL::post() to send the HTTP request
      *
      * @return array
      */
-    public function post($graphQL, $url = null, $wrapData = false, $variables = null)
+    public function post($graphQL, $url = null, $wrapData = false, $variables = null, $allowThrottledResponse = false)
     {
         if (!$url) $url = $this->generateUrl();
 
         $response = HttpRequestGraphQL::post($url, $graphQL, $this->httpHeaders, $variables);
 
-        return $this->processResponse($response);
+        return $this->processResponse($response, null, $allowThrottledResponse);
     }
 
     /**

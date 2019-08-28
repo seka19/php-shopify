@@ -469,13 +469,14 @@ abstract class ShopifyResource
      *
      * @param array $responseArray Request response in array format
      * @param string $dataKey Keyname to fetch data from response array
+     * @param bool $allowThrottledResponse
      *
      * @throws ApiException if the response has an error specified
      * @throws CurlException if response received with unexpected HTTP code.
      *
      * @return array
      */
-    public function processResponse($responseArray, $dataKey = null)
+    public function processResponse($responseArray, $dataKey = null, $allowThrottledResponse = false)
     {
         if ($responseArray === null) {
             //Something went wrong, Checking HTTP Codes
@@ -491,9 +492,11 @@ abstract class ShopifyResource
         }
 
         if (isset($responseArray['errors'])) {
-            $message = $this->castString($responseArray['errors']);
-
-            throw new ApiException($message);
+            $isThrottled = isset($responseArray['errors'][0]) && isset($responseArray['errors'][0]['message']) && $responseArray['errors'][0]['message'] === 'Throttled';
+            if (!$allowThrottledResponse || !$isThrottled) {
+                $message = $this->castString($responseArray['errors']);
+                throw new ApiException($message);
+            }
         }
 
         if ($dataKey && isset($responseArray[$dataKey])) {
