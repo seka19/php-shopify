@@ -68,7 +68,10 @@ class CurlRequest
      * @param string $url
      * @param array $httpHeaders
      *
-     * @return string
+     * @return CurlResponse
+     *
+     * @throws CurlException
+     * @throws ResourceRateLimitException
      */
     public static function get($url, $httpHeaders = array())
     {
@@ -85,7 +88,10 @@ class CurlRequest
      * @param array $data
      * @param array $httpHeaders
      *
-     * @return string
+     * @return CurlResponse
+     *
+     * @throws CurlException
+     * @throws ResourceRateLimitException
      */
     public static function post($url, $data, $httpHeaders = array())
     {
@@ -104,7 +110,10 @@ class CurlRequest
      * @param array $data
      * @param array $httpHeaders
      *
-     * @return string
+     * @return CurlResponse
+     *
+     * @throws CurlException
+     * @throws ResourceRateLimitException
      */
     public static function put($url, $data, $httpHeaders = array())
     {
@@ -122,7 +131,10 @@ class CurlRequest
      * @param string $url
      * @param array $httpHeaders
      *
-     * @return string
+     * @return CurlResponse
+     *
+     * @throws CurlException
+     * @throws ResourceRateLimitException
      */
     public static function delete($url, $httpHeaders = array())
     {
@@ -141,7 +153,7 @@ class CurlRequest
      * @throws CurlException if curl request is failed with error
      * @throws ResourceRateLimitException
      *
-     * @return string
+     * @return CurlResponse
      */
     protected static function processRequest($ch)
     {
@@ -179,7 +191,8 @@ class CurlRequest
         // close curl resource to free up system resources
         curl_close($ch);
 
-        return $response->getBody();
+        //return $response->getBody();
+        return $response;
     }
-    
+
 }

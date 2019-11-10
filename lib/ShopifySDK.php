@@ -400,4 +400,44 @@ class ShopifySDK
 
         static::$microtimeOfLastApiCall = microtime(true);
     }
+
+    /**
+     * Checks response headers for existence of next page info
+     *
+     * @return boolean
+     */
+    public function lastResourceContainsNextPageInfo()
+    {
+        return ShopifyResource::lastResourceContainsNextPageInfo();
+    }
+
+    /**
+     * Checks response headers for existence of previous page info
+     *
+     * @return boolean
+     */
+    public function lastResourceContainsPrevPageInfo()
+    {
+        return ShopifyResource::lastResourceContainsPrevPageInfo();
+    }
+
+    /**
+     * Gets next page info string for use in pagination
+     *
+     * @return string|bool
+     */
+    public function getNextPageInfo()
+    {
+        return ShopifyResource::getNextPageInfo();
+    }
+
+    /**
+     * Gets previous page info string for use in pagination
+     *
+     * @return string|bool
+     */
+    public function getPrevPageInfo()
+    {
+        return ShopifyResource::getPrevPageInfo();
+    }
 }

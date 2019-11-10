@@ -62,7 +62,10 @@ class HttpRequestJson
      * @param string $url
      * @param array $httpHeaders
      *
-     * @return string
+     * @return CurlResponse
+     *
+     * @throws Exception\CurlException
+     * @throws Exception\ResourceRateLimitException
      */
     public static function get($url, $httpHeaders = array())
     {
@@ -80,7 +83,10 @@ class HttpRequestJson
      * @param array $dataArray
      * @param array $httpHeaders
      *
-     * @return string
+     * @return CurlResponse
+     *
+     * @throws Exception\CurlException
+     * @throws Exception\ResourceRateLimitException
      */
     public static function post($url, $dataArray, $httpHeaders = array())
     {
@@ -98,7 +104,10 @@ class HttpRequestJson
      * @param array $dataArray
      * @param array $httpHeaders
      *
-     * @return string
+     * @return CurlResponse
+     *
+     * @throws Exception\CurlException
+     * @throws Exception\ResourceRateLimitException
      */
     public static function put($url, $dataArray, $httpHeaders = array())
     {
@@ -115,7 +124,10 @@ class HttpRequestJson
      * @param string $url
      * @param array $httpHeaders
      *
-     * @return string
+     * @return CurlResponse
+     *
+     * @throws Exception\CurlException
+     * @throws Exception\ResourceRateLimitException
      */
     public static function delete($url, $httpHeaders = array())
     {
@@ -129,14 +141,15 @@ class HttpRequestJson
     /**
      * Decode JSON response
      *
-     * @param string $response
+     * @param CurlResponse $response
      *
-     * @return array
+     * @return CurlResponse
      */
     protected static function processResponse($response)
     {
 
-        return json_decode($response, true);
+        //return json_decode($response, true);
+        return $response;
     }
 
 }
