@@ -139,28 +139,37 @@ class CurlRequest
      * @param resource $ch
      *
      * @throws CurlException if curl request is failed with error
+     * @throws ResourceRateLimitException
      *
      * @return string
      */
     protected static function processRequest($ch)
     {
-        # Check for 429 leaky bucket error
+        $err500tries = 30;
         while (1) {
             $output   = curl_exec($ch);
             $response = new CurlResponse($output);
 
             self::$lastHttpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            if (self::$lastHttpCode != 429) {
-                break;
+
+            if (self::$lastHttpCode === 429) {
+                # Check for 429 leaky bucket error
+                $limitHeader = explode('/', $response->getHeader('X-Shopify-Shop-Api-Call-Limit'), 2);
+                if (isset($limitHeader[1]) && $limitHeader[0] < $limitHeader[1]) {
+                    throw new ResourceRateLimitException($response->getBody());
+                }
+                usleep(500000);
+                continue;
             }
 
-            $limitHeader = explode('/', $response->getHeader('X-Shopify-Shop-Api-Call-Limit'), 2);
-
-            if (isset($limitHeader[1]) && $limitHeader[0] < $limitHeader[1]) {
-                throw new ResourceRateLimitException($response->getBody());
+            if ((int)floor(self::$lastHttpCode / 100) === 5 && $err500tries) {
+                # Retry on 50x error
+                sleep(10);
+                $err500tries--;
+                continue;
             }
 
-            usleep(500000);
+            break;
         }
 
         if (curl_errno($ch)) {
