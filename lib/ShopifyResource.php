@@ -526,9 +526,14 @@ abstract class ShopifyResource
         $headers = self::$httpResponseHeaders;
 
         if (isset($headers["Link"])) {
-            $matchData = array();
-
+            $matchData = [];
             if (preg_match("/<([^>]*)>; rel=\"next\"/", $headers["Link"], $matchData)) {
+                // found rel="next"
+                return true;
+            }
+        }elseif (isset($headers["link"])) {
+            $matchData = [];
+            if (preg_match("/<([^>]*)>; rel=\"next\"/", $headers["link"], $matchData)) {
                 // found rel="next"
                 return true;
             }
@@ -547,9 +552,14 @@ abstract class ShopifyResource
         $headers = self::$httpResponseHeaders;
 
         if (isset($headers["Link"])) {
-            $matchData = array();
-
+            $matchData = [];
             if (preg_match("/<([^>]*)>; rel=\"previous\"/", $headers["Link"], $matchData)) {
+                // found rel="prev"
+                return true;
+            }
+        }elseif (isset($headers["link"])) {
+            $matchData = [];
+            if (preg_match("/<([^>]*)>; rel=\"previous\"/", $headers["link"], $matchData)) {
                 // found rel="prev"
                 return true;
             }
@@ -568,9 +578,24 @@ abstract class ShopifyResource
         $headers = self::$httpResponseHeaders;
 
         if (isset($headers["Link"])) {
-            $matchData = array();
-
+            $matchData = [];
             if (preg_match("/<([^>]*)>; rel=\"next\"/", $headers["Link"], $matchData)) {
+                // print_r($matchData);
+                // found rel="next"
+                $query = parse_url($matchData[1], PHP_URL_QUERY);
+
+                $pairs = explode( "&", $query );
+                foreach( $pairs as $p ) {
+                    list( $key, $value) = explode( "=", $p );
+
+                    if( $key == "page_info" ) {
+                        return $value;
+                    }
+                }
+            }
+        }elseif (isset($headers["link"])) {
+            $matchData = [];
+            if (preg_match("/<([^>]*)>; rel=\"next\"/", $headers["link"], $matchData)) {
                 // print_r($matchData);
                 // found rel="next"
                 $query = parse_url($matchData[1], PHP_URL_QUERY);
@@ -599,9 +624,23 @@ abstract class ShopifyResource
         $headers = self::$httpResponseHeaders;
 
         if (isset($headers["Link"])) {
-            $matchData = array();
-
+            $matchData = [];
             if (preg_match("/<([^>]*)>; rel=\"previous\"/", $headers["Link"], $matchData)) {
+                // found rel="prev"
+                $query = parse_url($matchData[1], PHP_URL_QUERY);
+
+                $pairs = explode( "&", $query );
+                foreach( $pairs as $p ) {
+                    list( $key, $value) = explode( "=", $p );
+
+                    if( $key == "page_info" ) {
+                        return $value;
+                    }
+                }
+            }
+        }elseif (isset($headers["link"])) {
+            $matchData = [];
+            if (preg_match("/<([^>]*)>; rel=\"previous\"/", $headers["link"], $matchData)) {
                 // found rel="prev"
                 $query = parse_url($matchData[1], PHP_URL_QUERY);
 
